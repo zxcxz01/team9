@@ -1,0 +1,428 @@
+<%- include('css.html') %>
+    <style>
+        .container {
+            max-width: 100%;
+        }
+
+        .input-form {
+            max-width: 680px;
+
+            margin: 80px 0 80px 0;
+
+
+            padding: 32px;
+
+            background: #fff;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+            -webkit-box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.15);
+            -moz-box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.15);
+            box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.15)
+        }
+    </style>
+    </head>
+
+    <body>
+
+        <%- include('menu.html') %>
+
+            <% if(typeof data !='undefined' && data.alertMsg){ %>
+                <script>
+                    alert(`<%= data.alertMsg %>`);
+                </script>
+                <% } %>
+                    <div class="container" style="margin-top: 100px;">
+                        <div class="input-form-backgroud row">
+                            <div class="input-form col-md-12 mx-auto">
+                                <h2 class="mb-3">회원가입<span style="font-size: 20px; color: red;"> ( * 필수입력 )</span></h2>
+                                <hr>
+                                <form action="/save" class="validation-form" method="post">
+                                    <div class="row">
+                                        <div class="col-md-7 mb-3">
+
+                                            <label for="userid">아이디<span style="color: red">*</span></label>
+                                            <input type="text" name="userid" class="form-control" id="userid"
+                                                placeholder="아이디를 입력해주세요." maxlength="15" pattern="^[a-zA-Z0-9]{5,15}$"
+                                                oninput="checkId()" required>
+                                            <div id="idError" style="font-size: 14px; color: red;" class="error"></div>
+                                            <input type="hidden" id="overlappedCheck" name="overlappedCheck" value="N">
+                                        </div>
+                                        <div class="col-md-3 md-1">
+                                            <div>
+                                                <div style="font-size: 15px;">&nbsp;</div>
+                                            </div>
+                                            <button class="btn-lg btn-block btn btn-primary" type="button"
+                                                id="btnOverlapped"
+                                                style="background: #6A24FE; border-style: hidden; font-size: 18px; color: white"
+                                                onClick="fn_overlapped()">중복체크</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label for="userpw">패스워드<span style="color: red">
+                                                    *</span></label> <input type="password" name="userpw"
+                                                class="form-control" id="userpw" placeholder="패스워드를 입력해주세요."
+                                                maxlength="15" pattern="^(?=.*[a-zA-Z])(?=.*\d).{8,}$" value=""
+                                                oninput="checkPassword()" required>
+                                            <p id="passwordError" style="color: red;" class="error"></p>
+                                            <label for="confirmPassword">패스워드 확인<span style="color: red">
+                                                    *</span></label>
+                                            <input type="password" name="confirmPassword" class="form-control"
+                                                id="confirmPassword" placeholder="패스워드를 입력해주세요." maxlength="15"
+                                                pattern="^(?=.*[a-zA-Z])(?=.*\d).{8,}$" value=""
+                                                oninput="checkPassword()" required>
+
+                                            <p id="confirmPasswordError" style="color: red;" class="error"></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="userName">이름 <span style="color: red;">*</span></label>
+                                            <input type="text" class="form-control" name="userName" id="userName"
+                                                placeholder="이름을 입력하시오" value="" required>
+                                            <div class="invalid-feedback">
+                                                이름을 입력해주세요.
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label>성별</label><br>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="gender" id="male"
+                                                    value="male" required checked>
+                                                <label class="form-check-label" for="male">남</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="radio" name="gender" id="female"
+                                                    value="female">
+                                                <label class="form-check-label" for="female">여</label>
+                                            </div>
+                                            <div class="invalid-feedback">
+                                                성별을 선택해주세요.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="col-md-12 mb-3">
+                                            <label for="birthdate">생년월일 <span style="color: red;">*</span></label>
+                                            <input type="date" class="form-control" name="birthdate" id="birthdate">
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <label for="phone">전화번호<span style="color: red"> *</span></label>
+                                        <div class="col-md-8 mb-3">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="phone1" name="phone1"
+                                                    placeholder="010" maxlength="3" pattern="^\d{3}$" required>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="basic-addon2"> - </span>
+                                                </div>
+                                                <input type="text" class="form-control" id="phone2" name="phone2"
+                                                    placeholder="1234" maxlength="4" pattern="^\d{4}$" required>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="basic-addon2"> - </span>
+                                                </div>
+                                                <input type="text" class="form-control" id="phone3" name="phone3"
+                                                    placeholder="5678" maxlength="4" pattern="^\d{4}$" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <button class="btn btn-primary"
+                                                style="background-color: #6A24FE; border:#6A24FE" type="button"
+                                                onClick="certification()">인증번호 받기</button>
+
+                                            <script>
+                                                function certification() {
+                                                    alert("아직 미구현 된 상태입니다.");
+                                                }
+                                            </script>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <label for="email">이메일<span style="color: red"> *</span></label>
+                                        <div class="col-md-5 mb-3">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="email1" name="email1"
+                                                    placeholder="아이디" pattern="[a-zA-Z\d\.-]+" required>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="basic-addon2">@</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-7 mb-3">
+                                            <div>
+
+                                                <select class="form-control" id="selectEmail" name="email2" required>
+                                                    <option value="">도메인 선택</option>
+                                                    <option value="naver.com">naver.com</option>
+                                                    <option value="gmail.com">gmail.com</option>
+                                                    <option value="daum.net">daum.net</option>
+                                                    <option value="hanmail.net">hanmail.net</option>
+                                                    <option value="nate.com">nate.com</option>
+                                                    <option value="1">직접입력</option>
+                                                    <input class="form-control col-md-12 mb-3" type="text" name="email2"
+                                                        id="email2" disabled value="">
+                                                </select>
+                                                <div class="invalid-feedback">이메일을 입력해주세요.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="address">주소<span style="color: red">
+                                                    *</span></label> <input type="text" class="form-control"
+                                                id="address" name="address" placeholder="주소를 입력하세요." required>
+                                            <div class="invalid-feedback">주소를 입력해주세요.</div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div>
+                                                <div style="font-size: 15px;">&nbsp;</div>
+                                            </div>
+                                            <input type="button" class="btn btn-primary btn-lg btn-block"
+                                                onclick="sample6_execDaumPostcode()" value="주소 검색"
+                                                style="background-color: #6A24FE; border: #6A24FE;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="extraAddress">상세주소</label>
+                                            <input type="text" class="form-control" name="extraAddress"
+                                                id="extraAddress" placeholder="상세주소를 입력해주세요.">
+                                        </div>
+                                    </div>
+
+
+                                    <hr class="mb-4">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="agreement" required>
+                                        <label class="custom-control-label" for="agreement">개인정보 수집 및 이용에 동의합니다.</label>
+                                    </div>
+                                    <div class="mb-3"></div>
+                                    <button class="btn btn-primary col-md-12 btn-lg btn-block"
+                                        style="background-color: #6A24FE; border:#6A24FE" type="submit" id="signup">가입
+                                        완료</button>
+                                </form>
+                            </div>
+                        </div>
+                        <p style="margin: 40px;"> </p>
+
+
+
+                        <%- include('footer.html') %>
+
+
+
+                            <!-----------------------------   Script 부분  ------------------------------------>
+
+                            <!----------------------------- 주소 API ------------------------------------>
+
+                            <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+                            <script>
+                                function sample6_execDaumPostcode() {
+                                    new daum.Postcode({
+                                        oncomplete: function (data) {
+                                            // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+                                            // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                                            // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                                            let addr = ''; // 주소 변수
+                                            let extraAddr = ''; // 참고항목 변수
+
+                                            //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                                            if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                                                addr = data.roadAddress;
+                                            } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                                                addr = data.jibunAddress;
+                                            }
+
+                                            // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+                                            if (data.userSelectedType === 'R') {
+                                                // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                                                // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                                                if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+                                                    extraAddr += data.bname;
+                                                }
+                                                // 건물명이 있고, 공동주택일 경우 추가한다.
+                                                if (data.buildingName !== '' && data.apartment === 'Y') {
+                                                    extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                                                }
+                                                // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                                                if (extraAddr !== '') {
+                                                    extraAddr = ' (' + extraAddr + ')';
+                                                }
+                                                // 조합된 참고항목을 해당 필드에 넣는다.
+                                                document.getElementById("extraAddress").value = extraAddr;
+
+                                            } else {
+                                                document.getElementById("extraAddress").value = '';
+                                            }
+
+                                            // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                                            document.getElementById("address").value = addr;
+                                            // 커서를 상세주소 필드로 이동한다.
+                                        }
+                                    }).open();
+                                }
+                            </script>
+
+
+                            <!----------------------------- 부트스트랩 폼 유효성검사 ------------------------------------>
+                            <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+                            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+                            <script>
+
+                                window.addEventListener('load', () => {
+                                    const forms = document.getElementsByClassName('validation-form');
+
+                                    Array.prototype.filter.call(forms, (form) => {
+                                        form.addEventListener('submit', function (event) {
+                                            if (form.checkValidity() === false) {
+                                                event.preventDefault();
+                                                event.stopPropagation();
+                                            }
+
+                                            form.classList.add('was-validated');
+                                        }, false);
+                                    })
+                                }, false);
+
+
+
+
+
+                                // ================= ID 중복 체크 정규표현식 정의 ========================
+
+                                let idRegex = /^[a-zA-Z]*[0-9]+[a-zA-Z0-9]*$/;
+
+
+                                // 중복 체크 함수 수정
+                                function fn_overlapped() {
+                                    let userid = $("#userid").val();
+
+                                    if (userid == '') {
+                                        alert("ID를 입력하세요");
+                                        return;
+                                    }
+
+                                    // 입력된 아이디가 정규표현식에 맞는지 검사
+                                    if (!idRegex.test(userid)) {
+                                        alert("아이디는 영문자와 숫자로 이루어지며, 최소 5자 이상, 최대 15자 이하여야 합니다.");
+                                        return;
+                                    }
+
+                                    // 중복 체크를 위한 AJAX 코드
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "/overlapped", // 실제 서버의 라우트 경로로 변경
+                                        dataType: "text",
+                                        data: { userid: userid }, // 서버에 전송할 데이터 설정
+                                        success: function (data, textStatus) {
+                                            if (data == 'false') {
+                                                alert("사용할 수 있는 ID입니다.");
+                                                $('#userid').val(userid);
+                                                $('#overlappedCheck').val('Y');// 중복 체크 성공 시, 히든 필드에 값을 설정
+                                                $('#signup').prop('disabled', false);// 중복 체크 성공 시, 폼 제출 버튼 활성화
+                                            } else {
+                                                alert("사용할 수 없는 ID입니다.");
+                                                $('#overlappedCheck').val('N');// 중복 체크 실패 시, 히든 필드 값을 초기화
+                                                $('#signup').prop('disabled', true);// 중복 체크 실패 시, 폼 제출 버튼 비활성화
+                                                $('#idError').text('사용할 수 없는 ID입니다.');// 중복 체크 실패 시, 메시지를 표시
+                                            }
+                                        },
+                                        error: function (xhr, textStatus, errorThrown) {
+                                            alert("에러가 발생했습니다.");
+                                            // console.error(xhr.statusText);
+                                        }
+                                    });
+                                }
+
+                                function checkId() {
+                                    let _id = document.getElementById('userid').value;
+                                    let idError = document.getElementById('idError');
+
+                                    if (!idRegex.test(_id)) {
+                                        idError.textContent = '영문자/숫자 5 ~ 15자로 입력하세요';
+                                    } else {
+                                        idError.textContent = '';
+                                    }
+                                }
+
+                                document.getElementById('userid').addEventListener('input', checkId);
+
+
+
+                                // ================= password 실시간 정규표현식 정의 ========================
+
+
+                                // passwordRegex 정의
+                                let passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/;
+
+                                function checkPassword() {
+                                    let password = document.getElementById('userpw').value;
+                                    let confirmPassword = document.getElementById('confirmPassword').value;
+                                    let passwordError = document.getElementById('passwordError');
+                                    let confirmPasswordError = document.getElementById('confirmPasswordError');
+
+                                    // 비밀번호가 8자 이상이어야 함
+                                    if (password.length < 8 || !passwordRegex.test(password)) {
+                                        passwordError.textContent = '비밀번호는 영문자+숫자 포함 8자 이상이어야 합니다.';
+                                    } else {
+                                        passwordError.textContent = '';
+                                    }
+
+                                    // 비밀번호와 비밀번호 확인이 일치해야 함
+                                    if (password !== confirmPassword) {
+                                        confirmPasswordError.textContent = '비밀번호가 일치하지 않습니다.';
+                                    } else {
+                                        confirmPasswordError.textContent = '';
+                                    }
+                                }
+
+                                document.getElementById('signup').addEventListener('submit', function (event) {
+                                    // 폼 제출 전에 마지막으로 한 번 더 확인
+                                    checkPassword();
+                                })
+                                // 유효성 검사 통과 여부 확인
+                                let passwordError = document.getElementById('passwordError').textContent;
+                                let confirmPasswordError = document.getElementById('confirmPasswordError').textContent;
+
+                                if (passwordError || confirmPasswordError) {
+                                    // 유효성 검사 실패 시 폼 제출 취소
+                                    event.preventDefault();
+                                }
+
+
+                                // 비밀번호 입력 시 실시간으로 유효성 검사
+                                document.getElementById('userpw').addEventListener('input', checkPassword);
+                                document.getElementById('confirmPassword').addEventListener('input', checkPassword);
+
+                            </script>
+
+
+                            <!----------------------------- 이메일 선택옵션 ------------------------------------>
+
+                            <script type="text/javascript">
+                                //이메일 입력방식 선택
+                                $('#selectEmail').change(function () {
+                                    $("#selectEmail option:selected").each(function () {
+
+                                        if ($(this).val() == '1') { //직접입력일 경우
+                                            $("#email2").val('');                        //값 초기화
+                                            $("#email2").attr("disabled", false); //활성화
+                                        } else { //직접입력이 아닐경우
+                                            $("#email2").val($(this).text());      //선택값 입력
+                                            $("#email2").attr("disabled", true); //비활성화
+                                        }
+                                    });
+                                });
+                            </script>
+    </body>
+
+    </html>
